@@ -1,0 +1,19 @@
+{
+  "name": "udt_testing",
+  "version": "1.0.0",
+  "description": "UDT TESTING",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoangquocnam/UDT_Testing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hoangquocnam/UDT_Testing/issues"
+  },
+  "homepage": "https://github.com/hoangquocnam/UDT_Testing#readme"
+}

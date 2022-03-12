@@ -4,8 +4,8 @@ WELCOME TO UDT TEST, TRY ALL OF WHAT YOU CAN DO
 
 Your task is to design an algorithm to help logistic company able to rent enough containers at the lowest price.
 
-      + Case 1: 
-        - Input: 
+      + Case 1:
+        - Input:
             const neededContainer = 3;
             const listings = [
               {
@@ -24,14 +24,14 @@ Your task is to design an algorithm to help logistic company able to rent enough
                 totalCost: 3,
               },
             ];
-        - Output: 
+        - Output:
             [Contract with] Container renter B 2 container, price: 1
             [Contract with] Container renter A 1 container, price: 1
             [Summary] total cost 2
         - Explain: The optimal price is to rent 1 container from renter A and 2 containers from renter B, the total cost of them is 2. (Same total cost but different provider is accepted)
 
       + Case 2:
-          - Input: 
+          - Input:
               const neededContainer = 10;
               const listings = [
                 {
@@ -80,7 +80,7 @@ Your task is to design an algorithm to help logistic company able to rent enough
           - Output:
               [Contract with] Container renter C 10 container, price: 3
               [Summary] total cost 3
-          
+
     CASE STUDY: We are planning to build a backend for an e-commercial platform, your task is doing from system design, implementation to deploy production.
     SECTION I:
       1. Design UML for the backend of these features based on best practices to ensure scalable, easy coding.
@@ -92,9 +92,24 @@ Your task is to design an algorithm to help logistic company able to rent enough
           - Can read/create/update/delete agency.
 
     SECTION II:
-      1. With UML you have already designed on question 1, what database are you using to implement?
+      1. With UML you have already designed on question 1, what database are you using to implement? --> MongoDB (NoSQL)
       2. Why are you using that? What is the strong and weak point of it?
+         
+        - I'm using the MongoDB because we are building e-commercial platform, our system need to be a realtime system which requires a quick response. Besides , because system requires fast query or deals with a large number of requests, i think we can use MongoDB.
+
+        + Strength :
+          - Due to using data under format JSON, each collection will have different sizes and documents. The flexibility in data storage of MongoDB is very useful.
+          - Using MongoDB you can scale more easily. In MongoDB, you just need to add a node to the cluster when you want to scale a system. This is the agility when using MongoDB
+          - Each object in MongoDB, we always have '_id' added automatically by MongoDB for easily querying information.
+
+        +  Weakness:
+          - We need to be carefully when working with MongoDB because there is no such constraint.
+          - MongoDB contains data in the form of 'key - value' so key may be the same as others's.
+          - MongoDB has the risk of data loss when saving has not been completed yet, because process of update, insert, create,...data, MongoDB takes times to write all the data to the hard drive, so if there is some incident, data can be loss.
+
+
       3. Write docker-compose.yml to start the database locally.
+      
       4. Setup Loopback 4
       5. Using UML on question 1, set up API for these features.
 
@@ -107,7 +122,7 @@ Your task is to design an algorithm to help logistic company able to rent enough
         + Agency:
           - Agency can read/create/update/delete of owner product.
           - Agency can read transaction, billing of owner.
-        + Admin: 
+        + Admin:
           - Read billing, transaction linked product, customer, agency.
         + Common:
           - User can store auth state after reopen browser.
@@ -115,10 +130,10 @@ Your task is to design an algorithm to help logistic company able to rent enough
       3. What's the strong and weak point of your solution? How to improve that?
       4. Write sequence diagram to build a solution for testing, ensure correct permission scalable from 100 APIs to 1000 APIs.
 
-    SECTION III: Good job, right now our application needs to synchronize products, pricing of the Agency by using third-party API. 
+    SECTION III: Good job, right now our application needs to synchronize products, pricing of the Agency by using third-party API.
       1. Write sequence diagram to build a solution to save, merge products data from third-party API to our database. (Third-party API data change every hour)
       2. What's the strong and weak point of your solution? How to improve that?
-    
+
     SECTION IV:
       1. Write an architecture diagram to build a solution adapt the list of features below.
         + Ensure isolating development and production data. (Don't merge data together)

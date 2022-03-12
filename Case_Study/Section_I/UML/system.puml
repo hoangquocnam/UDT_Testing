@@ -1,0 +1,47 @@
+@startuml Application use cases diagram
+skinparam actorStyle awesome
+title UML of E-Commercial Platform
+
+
+class Information{
+    name: String
+    address: String
+    phoneNumber: String
+    gender: String
+    email: String
+}
+
+class Customer{
+    ..property..
+    information: Information
+    cart :
+    transaction:
+    billing:
+    ..method..
+}
+
+class Agency{
+    ..property..
+    information: Information
+    product :
+    transaction:
+    billing:
+    ..method..
+}
+
+class Admin{
+    ..property..
+    ..method..
+    readAgency() : void
+    createAgency(): void
+    updateAgency(): void
+    deleteAgency():void
+}
+
+Customer "1"*-- "1" Information 
+Agency "1"*-- "many" Information
+Admin "mange" -- Agency
+
+
+
+@enduml
