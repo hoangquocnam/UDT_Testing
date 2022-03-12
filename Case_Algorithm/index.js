@@ -1,22 +1,4 @@
-const neededContainer = 10;
-const listings = [
-  {
-    name: "Container renter A",
-    container: 5,
-    totalCost: 5,
-  },
-  {
-    name: "Container renter B",
-    container: 2,
-    totalCost: 10,
-  },
-  {
-    name: "Container renter C",
-    container: 2,
-    totalCost: 3,
-  },
-];
-
+const fs = require("fs");
 
 function solve(listContracts, givenNumberContainer) {
   if (Array.isArray(listContracts)) {
@@ -25,11 +7,9 @@ function solve(listContracts, givenNumberContainer) {
         firstRenter.container - secondRenter.container
     );
 
-
     const sortingContainers = listContracts
       .slice()
       .map((contract) => contract.container);
-
 
     let currentSummary = sortingContainers[0];
     let start = 0;
@@ -79,4 +59,12 @@ function solve(listContracts, givenNumberContainer) {
   }
 }
 
-solve(listings, neededContainer);
+fs.readFile("./testcase.json", "utf8", (err, data) => {
+  if (err) {
+    console.log(`Failed to read data from ${"./testcase.json"} : ${err}`);
+  } else {
+    const db = JSON.parse(data);
+    const { neededContainer, listings } = db;
+    solve(listings, neededContainer);
+  }
+});
