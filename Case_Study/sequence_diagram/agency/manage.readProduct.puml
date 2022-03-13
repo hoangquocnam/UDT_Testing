@@ -1,0 +1,11 @@
+@startuml Application use cases diagram
+title Agency's sequence diagram : Manage Product Owner / Read
+
+actor Agency
+participant Server
+database Database_products as DB
+
+Agency -> Server : GET/products/{ID}
+Server -> DB : query product with ID from request
+DB -> Server : return respective product
+Server -> Agency : response product's information 

@@ -1,0 +1,19 @@
+@startuml Application use cases diagram
+title Agency's sequence diagram : Manage Product Owner / Delete
+
+actor Agency
+participant Server
+database Database_products as DB
+
+
+Agency -> Server : DELETE/products/{ID} with token(JWT)
+Server -> Server: validate token and authorities of agency
+Server -[#red]> Agency: response : invalid token / authorities
+note over Server : continue if right
+Server -> Server : validate data of product (some required properties,...)
+Server -[#red]> Agency: response : invalid product
+note over Server : continue if right
+
+Server -[#blue]> DB : query product with ID and\nsoft delete (Ex: isDeleted: true, ...) product in Database
+DB -> Server : return data of product
+Server -> Agency: response (200, OK)

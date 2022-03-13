@@ -1,0 +1,20 @@
+@startuml Application use cases diagram
+title Agency's sequence diagram : Manage Product Owner / Update
+
+actor Agency
+participant Server
+database Database_products as DB
+
+
+Agency -> Server : PATCH or PUT/products/{ID} with (token(JWT), data to update)
+Server -> Server: validate token and authorities of agency
+Server -[#red]> Agency: response : invalid token / authorities
+note over Server : continue if right
+Server -> Server : validate data of product
+Server -[#red]> Agency: response : invalid changes
+note over Server : continue if right
+Server -[#blue]> DB : query data of Product by ID
+DB -> Server : return respective product
+Server -> DB : update data of product
+DB -> Server : after updating, return new data of product
+Server -> Agency: response (200, OK)

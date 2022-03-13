@@ -1,0 +1,17 @@
+@startuml Application use cases diagram
+title Customer's sequence diagram : Login
+
+
+
+actor Customer
+participant Server
+database Database_Customers as DB
+
+
+Customer -> Server : POST/login with email and password
+Server -> DB: query/find the customer with the email and password
+DB -[#Blue]> Server : return Customer valid
+Server -[#red]> Customer: response fail, \nrequire login again
+Server -[#Blue]>Customer: response (200) with a Token(JWT). 
+Customer <-[#Blue]- Customer : Save Token in storage \n(SessionStorage, LocalStorage,...)
+
