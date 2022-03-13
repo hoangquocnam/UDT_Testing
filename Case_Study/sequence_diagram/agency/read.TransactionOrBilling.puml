@@ -1,0 +1,18 @@
+@startuml Application use cases diagram
+title Agency's sequence diagram: Read billing, transaction
+
+actor Agency
+participant Server
+database Database_Billing_Transaction as DBofBT
+
+
+Agency -> Server : GET/transactions/{ID}  with (token(JWT))
+Server -> Server: validate token and authorities of agency
+Server -[#red]> Admin: response : invalid token / authorities
+note over Server : continue if right
+Server -> DBofBT: query transaction or billing by ID
+DBofBT -> Server : return needed the transaction / billing 
+Server -> Agency : response(200, data of transaction/billing)
+
+
+

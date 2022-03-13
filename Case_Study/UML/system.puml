@@ -11,21 +11,41 @@ class Information{
     email: String
 }
 
+class Billing{
+    date: String
+    by : String
+}
+
+
+class Transaction{
+    date: String
+}
+
+class Product{
+    id : String
+    name: String
+    transactionList: Transaction[]
+    billingList: Billing[]
+    price: Number
+    by : Agency
+}
+
 class Customer{
     ..property..
+    id : String
     information: Information
-    cart :
-    transaction:
-    billing:
+    cartList : Product[]
+    transactionList: Transaction[]
+    billingList: Billing[]
     ..method..
 }
 
 class Agency{
     ..property..
     information: Information
-    product :
-    transaction:
-    billing:
+    productList : Product[]
+    transaction: Transaction[]
+    billing: Billing[]
     ..method..
 }
 
@@ -40,7 +60,14 @@ class Admin{
 
 Customer "1"*-- "1" Information 
 Agency "1"*-- "many" Information
-Admin "mange" -- Agency
+Admin "manage" -- Agency
+Customer "1" *-- "many" Billing
+Customer "1" *-- "many" Transaction
+Customer "1" --> "many" Product
+Agency "1" *-- "many" Product
+Agency "1" *-- "many" Billing
+Agency "1" *-- "many" Transaction
+Transaction "1" -- "1" Billing
 
 
 
