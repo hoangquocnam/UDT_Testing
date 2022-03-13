@@ -44,36 +44,6 @@ export class CustomerController {
     public customerRepository: CustomerRepository,
   ) {}
 
-  @post('/customers')
-  @response(200, {
-    description: 'Customer model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Customer)}},
-  })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Customer, {
-            title: 'NewCustomer',
-            exclude: ['id'],
-          }),
-        },
-      },
-    })
-    customer: Omit<Customer, 'id'>,
-  ): Promise<Customer> {
-    return this.customerRepository.create(customer);
-  }
-
-  @get('/customers/count')
-  @response(200, {
-    description: 'Customer model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(@param.where(Customer) where?: Where<Customer>): Promise<Count> {
-    return this.customerRepository.count(where);
-  }
-
   @get('/customers')
   @response(200, {
     description: 'Array of Customer model instances',
@@ -90,25 +60,6 @@ export class CustomerController {
     @param.filter(Customer) filter?: Filter<Customer>,
   ): Promise<Customer[]> {
     return this.customerRepository.find(filter);
-  }
-
-  @patch('/customers')
-  @response(200, {
-    description: 'Customer PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Customer, {partial: true}),
-        },
-      },
-    })
-    customer: Customer,
-    @param.where(Customer) where?: Where<Customer>,
-  ): Promise<Count> {
-    return this.customerRepository.updateAll(customer, where);
   }
 
   @get('/customers/{id}')

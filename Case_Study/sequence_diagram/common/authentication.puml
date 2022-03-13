@@ -1,0 +1,25 @@
+@startuml Application use cases diagram
+title User's sequence diagram : Storing auth state when reopen browser
+
+
+actor User
+participant Server
+database Database_Customers as DB
+
+note left of User 
+User: Customer, Agency, Admin,...
+end note
+
+User -> User : checking exist token in storage
+note over User: already had token
+User -[#blue]> Server : GET / login with token in headers of request
+Server -[#blue]> User: response(200, data of user) \nif token is still valid
+Server -[#red]> User : response : failed, \n if token has expired
+note over User : not have token or token has expired
+User -> Server : POST login with email + username
+Server -> DB : query user in database
+DB -> Server : return data of found user
+Server -[#red]> User : response(401, invalid input) if invalid input
+Server -[#blue]> User : response(200) + Token(JWT)
+
+@endulm

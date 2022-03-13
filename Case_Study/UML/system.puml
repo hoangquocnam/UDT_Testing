@@ -59,13 +59,10 @@ class Admin{
 }
 
 Customer "1"*-- "1" Information 
+Customer "1".. "many" Product: use
 Agency "1"*-- "many" Information
-Admin "manage" -- Agency
-Customer "1" *-- "many" Billing
-Customer "1" *-- "many" Transaction
 Agency "1" *-- "many" Product
-Agency "1" *-- "many" Billing
-Agency "1" *-- "many" Transaction
+Admin "manage" -- Agency
 Product "1" -- "1" Transaction
 Product "1" -- "1" Billing
 

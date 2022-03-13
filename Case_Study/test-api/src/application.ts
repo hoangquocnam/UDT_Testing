@@ -18,8 +18,6 @@ import {BcryptHasher} from './services/hash.password';
 import {JWTStrategy} from './authentication-stratgies/jwt-stratgies';
 
 
-
-
 export {ApplicationConfig};
 
 export class TestApiApplication extends BootMixin(
