@@ -1,0 +1,12 @@
+@startuml Application use cases diagram
+title Customer's sequence diagram : Logout
+
+
+
+actor Customer
+participant Server
+
+Customer -> Server : POST/logout with Token/JWT 
+Server -> Server : validate Token and update db
+Server -> Customer : show correct logout
+Customer <-- Customer : remove data, record, token,...
