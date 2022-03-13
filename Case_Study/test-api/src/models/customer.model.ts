@@ -39,6 +39,24 @@ export class Customer extends Entity {
   })
   gender?: string;
 
+  @property({
+    type: 'object',
+    required: true,
+  })
+  cart: object;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  transaction: string;
+
+  @property({
+    type: 'object',
+    required: true,
+  })
+  billing: object;
+
   // Define well-known properties here
 
   // Indexer property to allow additional data

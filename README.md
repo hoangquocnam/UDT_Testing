@@ -109,8 +109,9 @@ Your task is to design an algorithm to help logistic company able to rent enough
 
 
       3. Write docker-compose.yml to start the database locally.
-      
+
       4. Setup Loopback 4
+      
       5. Using UML on question 1, set up API for these features.
 
     SECTION II:
