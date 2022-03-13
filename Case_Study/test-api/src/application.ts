@@ -9,13 +9,16 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
-import {AuthenticationComponent} from '@loopback/authentication';
-import {
-  JWTAuthenticationComponent,
-  MyUserService,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
-import { DatabaseDataSource } from './datasources';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {JWTService} from './services/jwt-service';
+import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
+import {SECURITY_SCHEME_SPEC} from '@loopback/authentication-jwt';
+import {MyUserService} from './services/user-service';
+import {BcryptHasher} from './services/hash.password';
+import {JWTStrategy} from './authentication-stratgies/jwt-stratgies';
+
+
+
 
 export {ApplicationConfig};
 
@@ -27,6 +30,9 @@ export class TestApiApplication extends BootMixin(
 
     // Set up the custom sequence
     this.sequence(MySequence);
+    this.setupBinding();
+    this.addSecuritySpec();
+
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
@@ -38,10 +44,8 @@ export class TestApiApplication extends BootMixin(
     this.component(RestExplorerComponent);
 
     this.projectRoot = __dirname;
-    // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
       controllers: {
-        // Customize ControllerBooter Conventions here
         dirs: ['controllers'],
         extensions: ['.controller.js'],
         nested: true,
@@ -49,9 +53,35 @@ export class TestApiApplication extends BootMixin(
     };
 
     this.component(AuthenticationComponent);
-    this.component(JWTAuthenticationComponent);
-    this.dataSource(DatabaseDataSource, UserServiceBindings.DATASOURCE_NAME);
+    registerAuthenticationStrategy(this, JWTStrategy)
+
+  }
+
+  setupBinding(): void {
+
+    this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+    this.bind(PasswordHasherBindings.ROUNDS).to(10)
     this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
-    
+    this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to(TokenServiceConstants.TOKEN_SECRET_VALUE)
+    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE);
+  }
+  addSecuritySpec(): void {
+    this.api({
+      openapi: '3.0.0',
+      info: {
+        title: 'test application',
+        version: '1.0.0',
+      },
+      paths: {},
+      components: {securitySchemes: SECURITY_SCHEME_SPEC},
+      security: [
+        {
+          // secure all endpoints with 'jwt'
+          jwt: [],
+        },
+      ],
+      servers: [{url: '/'}],
+    });
   }
 }

@@ -7,38 +7,39 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
   param,
-  get,
   getModelSchemaRef,
   patch,
   put,
   del,
-  requestBody,
   response,
 } from '@loopback/rest';
 import {Customer} from '../models';
-import {CustomerRepository} from '../repositories';
 import {
-  Credentials,
-  TokenServiceBindings,
   User,
-  UserRepository,
-  UserServiceBindings,
   MyUserService,
 } from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
-import {authenticate, TokenService, UserService} from '@loopback/authentication';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
+import {BcryptHasher} from '../services/hash.password';
+import {JWTService} from '../services/jwt-service';
+import {validateCredentials} from '../services';
+import {get, getJsonSchemaRef, post, requestBody} from '@loopback/rest';
+import * as _ from 'lodash';
+import {Credentials, CustomerRepository} from '../repositories';
+
 
 export class CustomerController {
   constructor(
-    @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: TokenService,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
+
     @inject(UserServiceBindings.USER_SERVICE)
-    public customerService: UserService<Customer, Credentials>,
-    @inject(SecurityBindings.USER, {optional: true})
-    public user: UserProfile,
+    public userService: MyUserService,
+
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: JWTService,
+
     @repository(CustomerRepository)
     public customerRepository: CustomerRepository,
   ) {}
@@ -185,31 +186,29 @@ export class CustomerController {
     },
   })
   async login(
-    @requestBody({
-      description: 'Required input for login',
-      required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            required: ['email', 'password'],
-            properties: {
-              email: {
-                type: 'string',
-              },
-              password: {
-                type: 'string',
-              },
-            },
-          },
-        },
-      },
-    })
-    credentials: Credentials,
+    @requestBody()credentials: Credentials,
   ): Promise<{token: string}> {
-    const user = await this.customerService.verifyCredentials(credentials);
-    const userProfile = this.customerService.convertToUserProfile(user);
+    const customer = await this.userService.verifyCredentials(credentials);
+    const userProfile = this.userService.convertToUserProfile(customer);
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    return Promise.resolve({token: token});
+  }
+
+  @post('/customers/signup', {
+    responses: {
+      '200': {
+        description: 'User',
+        content: {
+          schema: getJsonSchemaRef(User)
+        }
+      }
+    }
+  })
+  async signup(@requestBody() userData: User) {
+    validateCredentials(_.pick(userData, ['email', 'password']));
+    userData.password = await this.hasher.hashPassword(userData.password)
+    const savedUser = await this.customerRepository.create(userData);
+    // delete savedUser.password;
+    return savedUser;
   }
 }
