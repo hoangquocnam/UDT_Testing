@@ -63,11 +63,11 @@ Agency "1"*-- "many" Information
 Admin "manage" -- Agency
 Customer "1" *-- "many" Billing
 Customer "1" *-- "many" Transaction
-Customer "1" --> "many" Product
 Agency "1" *-- "many" Product
 Agency "1" *-- "many" Billing
 Agency "1" *-- "many" Transaction
-Transaction "1" -- "1" Billing
+Product "1" -- "1" Transaction
+Product "1" -- "1" Billing
 
 
 
