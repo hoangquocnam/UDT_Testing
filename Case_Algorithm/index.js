@@ -54,7 +54,16 @@ function solve(listContracts, givenNumberContainer) {
       }
       console.log(`[Summary] total cost ${lowestPrice}`);
     } else {
+      let sum = 0;
+      for (let i = 0; i < listContracts.length; i++) {
+        console.log(
+          `[Contract with] Container renter ${listContracts[i].name} ${listContracts[i].container} container, price: ${listContracts[i].totalCost}`
+        );
+        sum++;
+      }
       console.log("Not enough containers");
+      console.log(`[Summary] total cost ${sum}`);
+
     }
   }
 }
@@ -64,7 +73,14 @@ fs.readFile("./testcase.json", "utf8", (err, data) => {
     console.log(`Failed to read data from ${"./testcase.json"} : ${err}`);
   } else {
     const db = JSON.parse(data);
-    const { neededContainer, listings } = db;
-    solve(listings, neededContainer);
+    const tests = db.testcase;
+    if (Array.isArray(tests)) {
+      tests.forEach((tests, index) => {
+        console.log('>>>>>>>> Test case', index + 1);
+        const {neededContainer, listings} = tests;
+        solve(listings, neededContainer);
+        console.log()
+      })
+    }
   }
 });
