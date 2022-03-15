@@ -8,7 +8,6 @@ import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {MySequence} from './sequence';
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {JWTService} from './services/jwt-service';
 import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
@@ -26,8 +25,6 @@ export class TestApiApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
-    // Set up the custom sequence
-    this.sequence(MySequence);
     this.setupBinding();
     this.addSecuritySpec();
 

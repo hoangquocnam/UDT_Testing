@@ -16,10 +16,9 @@ import {
 } from '@loopback/rest';
 import {Customer} from '../models';
 import {
-  User,
   MyUserService,
 } from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
+import {inject, JSONObject} from '@loopback/core';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {BcryptHasher} from '../services/hash.password';
 import {JWTService} from '../services/jwt-service';
@@ -27,6 +26,7 @@ import {validateCredentials} from '../services';
 import {get, getJsonSchemaRef, post, requestBody} from '@loopback/rest';
 import * as _ from 'lodash';
 import {Credentials, CustomerRepository} from '../repositories';
+
 
 
 export class CustomerController {
@@ -62,7 +62,7 @@ export class CustomerController {
     return this.customerRepository.find(filter);
   }
 
-  @get('/customers/{id}')
+  @get('/customers/{id}/{token}')
   @response(200, {
     description: 'Customer model instance',
     content: {
@@ -72,12 +72,16 @@ export class CustomerController {
     },
   })
   async findById(
+    @param.path.string('token') token: string,
     @param.path.string('id') id: string,
     @param.filter(Customer, {exclude: 'where'})
     filter?: FilterExcludingWhere<Customer>,
   ): Promise<Customer> {
+    this.jwtService.verifyToken(token);
     return this.customerRepository.findById(id, filter);
   }
+
+
 
   @patch('/customers/{id}')
   @response(204, {
@@ -137,7 +141,7 @@ export class CustomerController {
     },
   })
   async login(
-    @requestBody()credentials: Credentials,
+    @requestBody() credentials: Credentials,
   ): Promise<{token: string}> {
     const customer = await this.userService.verifyCredentials(credentials);
     const userProfile = this.userService.convertToUserProfile(customer);
@@ -150,16 +154,15 @@ export class CustomerController {
       '200': {
         description: 'User',
         content: {
-          schema: getJsonSchemaRef(User)
+          schema: getJsonSchemaRef(Customer)
         }
       }
     }
   })
-  async signup(@requestBody() userData: User) {
+  async signup(@requestBody() userData: Customer) {
     validateCredentials(_.pick(userData, ['email', 'password']));
     userData.password = await this.hasher.hashPassword(userData.password)
     const savedUser = await this.customerRepository.create(userData);
-    // delete savedUser.password;
-    return savedUser;
+    return savedUser.id;
   }
 }

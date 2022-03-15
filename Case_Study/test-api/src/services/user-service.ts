@@ -18,6 +18,7 @@ export class MyUserService implements UserService<Customer, Credentials>{
     public hasher: BcryptHasher
 
   ) {}
+  
   async verifyCredentials(credentials: Credentials): Promise<Customer> {
     // implement this method
     const foundUser = await this.userRepository.findOne({
